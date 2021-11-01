@@ -11,6 +11,7 @@ import androidx.fragment.app.Fragment
 import com.example.techtest.databinding.FragmentItemDetailBinding
 import com.example.techtest.placeholder.PlaceholderContent
 import com.google.android.material.appbar.CollapsingToolbarLayout
+import dagger.hilt.android.AndroidEntryPoint
 
 /**
  * A fragment representing a single Item detail screen.
@@ -18,6 +19,7 @@ import com.google.android.material.appbar.CollapsingToolbarLayout
  * in two-pane mode (on larger screen devices) or self-contained
  * on handsets.
  */
+@AndroidEntryPoint
 class ItemDetailFragment : Fragment() {
 
     /**

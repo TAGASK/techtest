@@ -12,11 +12,17 @@ import android.widget.TextView
 import android.widget.Toast
 import androidx.core.view.ViewCompat
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.viewModels
+import androidx.lifecycle.Observer
 import androidx.navigation.findNavController
+import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.techtest.databinding.FragmentItemListBinding
 import com.example.techtest.databinding.ItemListContentBinding
 import com.example.techtest.placeholder.PlaceholderContent
+import com.example.techtest.utils.Resource
+import com.example.techtest.utils.autoCleared
+import dagger.hilt.android.AndroidEntryPoint
 
 /**
  * A Fragment representing a list of Pings. This fragment
@@ -26,14 +32,18 @@ import com.example.techtest.placeholder.PlaceholderContent
  * item details. On larger screens, the Navigation controller presents the list of items and
  * item details side-by-side using two vertical panes.
  */
+@AndroidEntryPoint
+class ItemListFragment : Fragment(), ProfileAdapter.ProfileItemListener {
 
-class ItemListFragment : Fragment() {
+    private var binding: FragmentItemListBinding by autoCleared()
+    private val viewModel: ProfileViewModel by viewModels()
+    private lateinit var adapter: ProfileAdapter
 
     /**
      * Method to intercept global key events in the
      * item list fragment to trigger keyboard shortcuts
      * Currently provides a toast when Ctrl + Z and Ctrl + F
-     * are triggered
+     * are triggeredProfileViewModel
      */
     private val unhandledKeyEventListenerCompat =
         ViewCompat.OnUnhandledKeyEventListenerCompat { v, event ->
@@ -55,18 +65,12 @@ class ItemListFragment : Fragment() {
             false
         }
 
-    private var _binding: FragmentItemListBinding? = null
-
-    // This property is only valid between onCreateView and
-    // onDestroyView.
-    private val binding get() = _binding!!
-
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
 
-        _binding = FragmentItemListBinding.inflate(inflater, container, false)
+        binding = FragmentItemListBinding.inflate(inflater, container, false)
         return binding.root
 
     }
@@ -77,28 +81,6 @@ class ItemListFragment : Fragment() {
         ViewCompat.addOnUnhandledKeyEventListener(view, unhandledKeyEventListenerCompat)
 
         val recyclerView: RecyclerView = binding.itemList
-
-        // Leaving this not using view binding as it relies on if the view is visible the current
-        // layout configuration (layout, layout-sw600dp)
-        val itemDetailFragmentContainer: View? = view.findViewById(R.id.item_detail_nav_container)
-
-        /** Click Listener to trigger navigation based on if you have
-         * a single pane layout or two pane layout
-         */
-        val onClickListener = View.OnClickListener { itemView ->
-            val item = itemView.tag as PlaceholderContent.PlaceholderItem
-            val bundle = Bundle()
-            bundle.putString(
-                ItemDetailFragment.ARG_ITEM_ID,
-                item.id
-            )
-            if (itemDetailFragmentContainer != null) {
-                itemDetailFragmentContainer.findNavController()
-                    .navigate(R.id.fragment_item_detail, bundle)
-            } else {
-                itemView.findNavController().navigate(R.id.show_item_detail, bundle)
-            }
-        }
 
         /**
          * Context click listener to handle Right click events
@@ -114,20 +96,35 @@ class ItemListFragment : Fragment() {
             ).show()
             true
         }
-        setupRecyclerView(recyclerView, onClickListener, onContextClickListener)
+        setupRecyclerView(recyclerView, this, onContextClickListener)
+        setUpObservers()
+    }
+
+    private fun setUpObservers() {
+        viewModel.profile.observe(viewLifecycleOwner, Observer {
+            when (it.status) {
+                Resource.Status.SUCCESS -> {
+                    binding.progressBar?.visibility = View.GONE
+                    if (!it.data.isNullOrEmpty()) adapter.setItems(ArrayList(it.data))
+                }
+                Resource.Status.ERROR ->
+                    Toast.makeText(requireContext(), it.message, Toast.LENGTH_SHORT).show()
+
+                Resource.Status.LOADING ->
+                    binding.progressBar?.visibility = View.VISIBLE
+            }
+        })
     }
 
     private fun setupRecyclerView(
         recyclerView: RecyclerView,
-        onClickListener: View.OnClickListener,
+        onClickListener: ProfileAdapter.ProfileItemListener,
         onContextClickListener: View.OnContextClickListener
     ) {
 
-        recyclerView.adapter = SimpleItemRecyclerViewAdapter(
-            PlaceholderContent.ITEMS,
-            onClickListener,
-            onContextClickListener
-        )
+        adapter = ProfileAdapter(onClickListener)
+        recyclerView.layoutManager = LinearLayoutManager(requireContext())
+        recyclerView.adapter = adapter
     }
 
     class SimpleItemRecyclerViewAdapter(
@@ -190,14 +187,35 @@ class ItemListFragment : Fragment() {
 
         inner class ViewHolder(binding: ItemListContentBinding) :
             RecyclerView.ViewHolder(binding.root) {
-            val idView: TextView = binding.idText
-            val contentView: TextView = binding.content
+            val idView: TextView = binding.name
+            val contentView: TextView = binding.title
         }
 
     }
 
     override fun onDestroyView() {
         super.onDestroyView()
-        _binding = null
+    }
+
+    fun clickedProfile(id: String) {
+        // Leaving this not using view binding as it relies on if the view is visible the current
+        // layout configuration (layout, layout-sw600dp)
+        val itemDetailFragmentContainer: View? = view?.findViewById(R.id.item_detail_nav_container)
+        val bundle = Bundle()
+        bundle.putString(
+            ItemDetailFragment.ARG_ITEM_ID,
+            id
+        )
+        if (itemDetailFragmentContainer != null) {
+            itemDetailFragmentContainer.findNavController()
+                .navigate(R.id.fragment_item_detail, bundle)
+        } else {
+            view?.findNavController()?.navigate(R.id.show_item_detail, bundle)
+        }
+    }
+
+
+    override fun onClickedProfile(id: String) {
+        clickedProfile(id)
     }
 }
