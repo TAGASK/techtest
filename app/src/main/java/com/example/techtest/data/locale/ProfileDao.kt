@@ -18,7 +18,4 @@ interface ProfileDao {
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insertAll(profiles: List<Profile>)
-
-//    @Insert(onConflict = OnConflictStrategy.REPLACE)
-//    suspend fun insert(profile: Profile)
 }

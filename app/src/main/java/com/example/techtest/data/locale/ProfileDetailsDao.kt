@@ -14,10 +14,7 @@ interface ProfileDetailsDao {
     fun getUsers(): LiveData<List<ProfileDetails>>
 
     @Query("SELECT * FROM ProfilesDetails WHERE id = :id")
-    fun getUser(id: Int): LiveData<ProfileDetails>
-
-//    @Insert(onConflict = OnConflictStrategy.REPLACE)
-//    suspend fun insertAll(profiles: List<ProfileDetails>): Long
+    fun getUser(id: String): LiveData<ProfileDetails>
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insert(profile: ProfileDetails)
