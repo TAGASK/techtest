@@ -7,5 +7,5 @@ class ProfileRemoteDataSource @Inject constructor(
 ) : BaseDataSource() {
 
     suspend fun getUsers() = getResult { profileService.getUsers() }
-    suspend fun getUser(id: Int) = getResult { profileService.getUser(id) }
+    suspend fun getUser(id: String) = getResult { profileService.getUser(id) }
 }

@@ -104,11 +104,16 @@ class ItemListFragment : Fragment(), ProfileAdapter.ProfileItemListener {
         viewModel.profile.observe(viewLifecycleOwner, Observer {
             when (it.status) {
                 Resource.Status.SUCCESS -> {
-                    binding.progressBar?.visibility = View.GONE
-                    if (!it.data.isNullOrEmpty()) adapter.setItems(ArrayList(it.data))
+                    it.data?.let { data ->
+                        binding.progressBar?.visibility = View.GONE
+                        adapter.setItems(ArrayList(data))
+                    }
                 }
-                Resource.Status.ERROR ->
+
+                Resource.Status.ERROR -> {
+                    binding.progressBar?.visibility = View.GONE
                     Toast.makeText(requireContext(), it.message, Toast.LENGTH_SHORT).show()
+                }
 
                 Resource.Status.LOADING ->
                     binding.progressBar?.visibility = View.VISIBLE
@@ -191,10 +196,6 @@ class ItemListFragment : Fragment(), ProfileAdapter.ProfileItemListener {
             val contentView: TextView = binding.title
         }
 
-    }
-
-    override fun onDestroyView() {
-        super.onDestroyView()
     }
 
     fun clickedProfile(id: String) {

@@ -10,7 +10,7 @@ class ProfileRepository @Inject constructor(
     private val localDataSource: AppDatabase
 ) {
 
-    fun getUser(id: Int) = performGetOperation(
+    fun getUser(id: String) = performGetOperation(
         databaseQuery = { localDataSource.profileDetailsDao().getUser(id) },
         networkCall = { remoteDataSource.getUser(id) },
         saveCallResult = { localDataSource.profileDetailsDao().insert(it) }

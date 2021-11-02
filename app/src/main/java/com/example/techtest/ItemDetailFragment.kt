@@ -1,16 +1,20 @@
 package com.example.techtest
 
-import android.content.ClipData
 import android.os.Bundle
-import android.view.DragEvent
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
+import android.widget.Toast
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.viewModels
+import androidx.lifecycle.Observer
+import com.bumptech.glide.Glide
+import com.bumptech.glide.load.resource.bitmap.CircleCrop
+import com.example.techtest.data.entities.ProfileDetails
 import com.example.techtest.databinding.FragmentItemDetailBinding
-import com.example.techtest.placeholder.PlaceholderContent
-import com.google.android.material.appbar.CollapsingToolbarLayout
+import com.example.techtest.utils.Resource
+import com.example.techtest.utils.autoCleared
 import dagger.hilt.android.AndroidEntryPoint
 
 /**
@@ -22,68 +26,68 @@ import dagger.hilt.android.AndroidEntryPoint
 @AndroidEntryPoint
 class ItemDetailFragment : Fragment() {
 
-    /**
-     * The placeholder content this fragment is presenting.
-     */
-    private var item: PlaceholderContent.PlaceholderItem? = null
+
+    private var binding: FragmentItemDetailBinding by autoCleared()
+    private val viewModel: ProfileDetailsViewModel by viewModels()
+
 
     lateinit var itemDetailTextView: TextView
-    private var toolbarLayout: CollapsingToolbarLayout? = null
-
-    private var _binding: FragmentItemDetailBinding? = null
-
-    // This property is only valid between onCreateView and
-    // onDestroyView.
-    private val binding get() = _binding!!
-
-    private val dragListener = View.OnDragListener { v, event ->
-        if (event.action == DragEvent.ACTION_DROP) {
-            val clipDataItem: ClipData.Item = event.clipData.getItemAt(0)
-            val dragData = clipDataItem.text
-            item = PlaceholderContent.ITEM_MAP[dragData]
-            updateContent()
-        }
-        true
-    }
-
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-
-        arguments?.let {
-            if (it.containsKey(ARG_ITEM_ID)) {
-                // Load the placeholder content specified by the fragment
-                // arguments. In a real-world scenario, use a Loader
-                // to load content from a content provider.
-                item = PlaceholderContent.ITEM_MAP[it.getString(ARG_ITEM_ID)]
-            }
-        }
-    }
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
 
-        _binding = FragmentItemDetailBinding.inflate(inflater, container, false)
+        binding = FragmentItemDetailBinding.inflate(inflater, container, false)
         val rootView = binding.root
 
-        toolbarLayout = binding.toolbarLayout
         itemDetailTextView = binding.itemDetail
-
         updateContent()
-        rootView.setOnDragListener(dragListener)
+        arguments?.getString(ARG_ITEM_ID)?.let {
+            viewModel.start(it)
+        }
 
         return rootView
     }
 
-    private fun updateContent() {
-        toolbarLayout?.title = item?.content
-
-        // Show the placeholder content as text in a TextView.
-        item?.let {
-            itemDetailTextView.text = it.details
-        }
+    private fun bindDetails(data: ProfileDetails) {
+        binding.name.text = """${data.firstName}  ${data.lastName}"""
+        binding.itemDetail.text = """Name : ${data.lastName}
+                |Firstname : ${data.firstName}
+                |Gender : ${data.gender}
+                |Phone : ${data.phone}
+                |Email : ${data.email}""".trimMargin()
+        Glide.with(binding.root)
+            .load(data.picture)
+            .transform(CircleCrop())
+            .into(binding.image)
     }
+
+    private fun updateContent() {
+        viewModel.profileDetails.observe(viewLifecycleOwner, Observer { it ->
+            when (it.status) {
+                Resource.Status.SUCCESS -> {
+                    it.data?.let { data ->
+                        bindDetails(data)
+                        binding.progressBar?.visibility = View.GONE
+                        binding.itemDetailContainer.visibility = View.VISIBLE
+                    }
+                }
+
+                Resource.Status.ERROR -> {
+                    binding.progressBar?.visibility = View.GONE
+                    Toast.makeText(activity, it.message, Toast.LENGTH_SHORT)
+                        .show()
+                }
+
+                Resource.Status.LOADING -> {
+                    binding.progressBar?.visibility = View.VISIBLE
+                    binding.itemDetailContainer.visibility = View.GONE
+                }
+            }
+        })
+    }
+
 
     companion object {
         /**
@@ -93,8 +97,4 @@ class ItemDetailFragment : Fragment() {
         const val ARG_ITEM_ID = "item_id"
     }
 
-    override fun onDestroyView() {
-        super.onDestroyView()
-        _binding = null
-    }
 }

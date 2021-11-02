@@ -12,6 +12,6 @@ interface ProfileService {
     suspend fun getUsers(): Response<ProfileList>
 
     @GET("user/{id}")
-    suspend fun getUser(@Path("id") id: Int): Response<ProfileDetails>
+    suspend fun getUser(@Path("id") id: String): Response<ProfileDetails>
 
 }
