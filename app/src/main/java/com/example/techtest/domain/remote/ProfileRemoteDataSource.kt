@@ -1,4 +1,4 @@
-package com.example.techtest.data.remote
+package com.example.techtest.domain.remote
 
 import javax.inject.Inject
 
@@ -6,6 +6,6 @@ class ProfileRemoteDataSource @Inject constructor(
     private val profileService: ProfileService
 ) : BaseDataSource() {
 
-    suspend fun getUsers() = getResult { profileService.getUsers() }
+    suspend fun getUsers(page: Int) = getResult { profileService.getUsers(page) }
     suspend fun getUser(id: String) = getResult { profileService.getUser(id) }
 }

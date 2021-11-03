@@ -1,4 +1,4 @@
-package com.example.techtest
+package com.example.techtest.presenter
 
 import android.annotation.SuppressLint
 import android.view.LayoutInflater
@@ -25,6 +25,13 @@ class ProfileAdapter(private val listener: ProfileItemListener) :
         notifyDataSetChanged()
     }
 
+    fun add(items: ArrayList<Profile>) {
+        val count = this.itemCount
+        val newItemsCount = items.size
+        this.items.addAll(items)
+        notifyItemRangeInserted(count, newItemsCount)
+    }
+
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): CharacterViewHolder {
         val binding: ItemListContentBinding =
             ItemListContentBinding.inflate(LayoutInflater.from(parent.context), parent, false)
@@ -35,6 +42,8 @@ class ProfileAdapter(private val listener: ProfileItemListener) :
 
     override fun onBindViewHolder(holder: CharacterViewHolder, position: Int) =
         holder.bind(items[position])
+
+
 }
 
 class CharacterViewHolder(

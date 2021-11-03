@@ -1,4 +1,4 @@
-package com.example.techtest.data.remote
+package com.example.techtest.domain.remote
 
 import com.example.techtest.utils.AppLog
 import com.example.techtest.utils.Resource
@@ -9,8 +9,10 @@ abstract class BaseDataSource {
     protected suspend fun <T> getResult(call: suspend () -> Response<T>): Resource<T> {
         try {
             val response = call()
+            AppLog.logD("fred : $response")
             if (response.isSuccessful) {
                 val body = response.body()
+                AppLog.logD("fred : $body")
                 if (body != null) return Resource.success(body)
             }
             return error(" ${response.code()} ${response.message()}")
@@ -20,7 +22,7 @@ abstract class BaseDataSource {
     }
 
     private fun <T> error(message: String): Resource<T> {
-        AppLog.logD(message)
+        AppLog.logD("fred : $message")
         return Resource.error("Network call has failed for a following reason: $message")
     }
 

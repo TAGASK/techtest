@@ -1,4 +1,4 @@
-package com.example.techtest
+package com.example.techtest.presenter
 
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
@@ -7,6 +7,7 @@ import androidx.navigation.fragment.NavHostFragment
 import androidx.navigation.ui.AppBarConfiguration
 import androidx.navigation.ui.navigateUp
 import androidx.navigation.ui.setupActionBarWithNavController
+import com.example.techtest.R
 import com.example.techtest.databinding.ActivityItemDetailBinding
 import dagger.hilt.android.AndroidEntryPoint
 

@@ -1,7 +1,7 @@
-package com.example.techtest.data.repository
+package com.example.techtest.domain.repository
 
-import com.example.techtest.data.locale.AppDatabase
-import com.example.techtest.data.remote.ProfileRemoteDataSource
+import com.example.techtest.domain.locale.AppDatabase
+import com.example.techtest.domain.remote.ProfileRemoteDataSource
 import com.example.techtest.utils.performGetOperation
 import javax.inject.Inject
 
@@ -16,9 +16,9 @@ class ProfileRepository @Inject constructor(
         saveCallResult = { localDataSource.profileDetailsDao().insert(it) }
     )
 
-    fun getUsers() = performGetOperation(
+    fun getUsers(page: Int) = performGetOperation(
         databaseQuery = { localDataSource.profileDao().getUsers() },
-        networkCall = { remoteDataSource.getUsers() },
+        networkCall = { remoteDataSource.getUsers(page) },
         saveCallResult = { localDataSource.profileDao().insertAll(it.data) }
     )
 }

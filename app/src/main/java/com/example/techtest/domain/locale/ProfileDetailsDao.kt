@@ -1,4 +1,4 @@
-package com.example.techtest.data.locale
+package com.example.techtest.domain.locale
 
 import androidx.lifecycle.LiveData
 import androidx.room.Dao

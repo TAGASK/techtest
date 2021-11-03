@@ -1,15 +1,13 @@
-package com.example.techtest
+package com.example.techtest.presenter
 
-import android.content.ClipData
-import android.content.ClipDescription
-import android.os.Build
 import android.os.Bundle
+import android.os.Parcelable
 import android.view.KeyEvent
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.TextView
 import android.widget.Toast
+import androidx.annotation.Nullable
 import androidx.core.view.ViewCompat
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
@@ -17,12 +15,14 @@ import androidx.lifecycle.Observer
 import androidx.navigation.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.example.techtest.R
 import com.example.techtest.databinding.FragmentItemListBinding
-import com.example.techtest.databinding.ItemListContentBinding
-import com.example.techtest.placeholder.PlaceholderContent
 import com.example.techtest.utils.Resource
 import com.example.techtest.utils.autoCleared
 import dagger.hilt.android.AndroidEntryPoint
+
+const val constRecyclerState = "ItemListFragment.recycler.layout"
+
 
 /**
  * A Fragment representing a list of Pings. This fragment
@@ -34,6 +34,7 @@ import dagger.hilt.android.AndroidEntryPoint
  */
 @AndroidEntryPoint
 class ItemListFragment : Fragment(), ProfileAdapter.ProfileItemListener {
+
 
     private var binding: FragmentItemListBinding by autoCleared()
     private val viewModel: ProfileViewModel by viewModels()
@@ -81,23 +82,9 @@ class ItemListFragment : Fragment(), ProfileAdapter.ProfileItemListener {
         ViewCompat.addOnUnhandledKeyEventListener(view, unhandledKeyEventListenerCompat)
 
         val recyclerView: RecyclerView = binding.itemList
-
-        /**
-         * Context click listener to handle Right click events
-         * from mice and trackpad input to provide a more native
-         * experience on larger screen devices
-         */
-        val onContextClickListener = View.OnContextClickListener { v ->
-            val item = v.tag as PlaceholderContent.PlaceholderItem
-            Toast.makeText(
-                v.context,
-                "Context click of item " + item.id,
-                Toast.LENGTH_LONG
-            ).show()
-            true
-        }
-        setupRecyclerView(recyclerView, this, onContextClickListener)
+        setupRecyclerView(recyclerView, this)
         setUpObservers()
+        viewModel.start()
     }
 
     private fun setUpObservers() {
@@ -106,7 +93,18 @@ class ItemListFragment : Fragment(), ProfileAdapter.ProfileItemListener {
                 Resource.Status.SUCCESS -> {
                     it.data?.let { data ->
                         binding.progressBar?.visibility = View.GONE
-                        adapter.setItems(ArrayList(data))
+                        if (data.isEmpty()) {
+                            binding.itemList.clearOnScrollListeners()
+                            Toast.makeText(
+                                requireContext(), R.string.end_of_list, Toast.LENGTH_SHORT
+                            ).show()
+                        } else {
+                            if (adapter.itemCount > 0) {
+                                adapter.add(ArrayList(data))
+                            } else {
+                                adapter.setItems(ArrayList(data))
+                            }
+                        }
                     }
                 }
 
@@ -123,79 +121,41 @@ class ItemListFragment : Fragment(), ProfileAdapter.ProfileItemListener {
 
     private fun setupRecyclerView(
         recyclerView: RecyclerView,
-        onClickListener: ProfileAdapter.ProfileItemListener,
-        onContextClickListener: View.OnContextClickListener
+        onClickListener: ProfileAdapter.ProfileItemListener
     ) {
 
         adapter = ProfileAdapter(onClickListener)
         recyclerView.layoutManager = LinearLayoutManager(requireContext())
         recyclerView.adapter = adapter
-    }
-
-    class SimpleItemRecyclerViewAdapter(
-        private val values: List<PlaceholderContent.PlaceholderItem>,
-        private val onClickListener: View.OnClickListener,
-        private val onContextClickListener: View.OnContextClickListener
-    ) :
-        RecyclerView.Adapter<SimpleItemRecyclerViewAdapter.ViewHolder>() {
-
-        override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
-
-            val binding =
-                ItemListContentBinding.inflate(LayoutInflater.from(parent.context), parent, false)
-            return ViewHolder(binding)
-
-        }
-
-        override fun onBindViewHolder(holder: ViewHolder, position: Int) {
-            val item = values[position]
-            holder.idView.text = item.id
-            holder.contentView.text = item.content
-
-            with(holder.itemView) {
-                tag = item
-                setOnClickListener(onClickListener)
-                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-                    setOnContextClickListener(onContextClickListener)
-                }
-
-                setOnLongClickListener { v ->
-                    // Setting the item id as the clip data so that the drop target is able to
-                    // identify the id of the content
-                    val clipItem = ClipData.Item(item.id)
-                    val dragData = ClipData(
-                        v.tag as? CharSequence,
-                        arrayOf(ClipDescription.MIMETYPE_TEXT_PLAIN),
-                        clipItem
-                    )
-
-                    if (Build.VERSION.SDK_INT >= 24) {
-                        v.startDragAndDrop(
-                            dragData,
-                            View.DragShadowBuilder(v),
-                            null,
-                            0
-                        )
-                    } else {
-                        v.startDrag(
-                            dragData,
-                            View.DragShadowBuilder(v),
-                            null,
-                            0
-                        )
-                    }
+        recyclerView.addOnScrollListener(object : RecyclerView.OnScrollListener() {
+            override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
+                super.onScrolled(recyclerView, dx, dy)
+                if (!recyclerView.canScrollVertically(1)) {
+                    viewModel.loadMore()
                 }
             }
+        })
+    }
+
+    /**
+     * This is a method for Fragment.
+     * You can do the same in onCreate or onRestoreInstanceState
+     */
+    override fun onViewStateRestored(@Nullable savedInstanceState: Bundle?) {
+        super.onViewStateRestored(savedInstanceState)
+        if (savedInstanceState != null) {
+            val savedRecyclerLayoutState =
+                savedInstanceState.getParcelable<Parcelable>(constRecyclerState)
+            binding.itemList?.layoutManager?.onRestoreInstanceState(savedRecyclerLayoutState)
         }
+    }
 
-        override fun getItemCount() = values.size
-
-        inner class ViewHolder(binding: ItemListContentBinding) :
-            RecyclerView.ViewHolder(binding.root) {
-            val idView: TextView = binding.name
-            val contentView: TextView = binding.title
-        }
-
+    override fun onSaveInstanceState(outState: Bundle) {
+        super.onSaveInstanceState(outState)
+        outState.putParcelable(
+            constRecyclerState,
+            binding.itemList?.layoutManager?.onSaveInstanceState()
+        )
     }
 
     fun clickedProfile(id: String) {

@@ -1,4 +1,4 @@
-package com.example.techtest
+package com.example.techtest.presenter
 
 import android.os.Bundle
 import android.view.LayoutInflater

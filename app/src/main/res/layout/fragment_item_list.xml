@@ -15,8 +15,10 @@
         android:layout_height="match_parent"
         android:layout_marginLeft="16dp"
         android:layout_marginRight="16dp"
+        android:scrollbarAlwaysDrawVerticalTrack="true"
+        android:scrollbarFadeDuration="0"
         app:layoutManager="LinearLayoutManager"
-        tools:context="com.example.techtest.ItemDetailHostActivity"
+        tools:context="com.example.techtest.presenter.ItemDetailHostActivity"
         tools:listitem="@layout/item_list_content" />
 
     <ProgressBar

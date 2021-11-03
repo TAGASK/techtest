@@ -2,4 +2,5 @@
     <string name="app_name">techtest</string>
     <string name="title_item_list">Contacts List :</string>
     <string name="title_item_detail">Contact Details</string>
+    <string name="end_of_list">List ending !</string>
 </resources>
