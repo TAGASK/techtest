@@ -5,7 +5,6 @@ import androidx.test.core.app.ApplicationProvider
 import com.example.techtest.data.entities.Profile
 import com.example.techtest.domain.locale.AppDatabase
 import com.example.techtest.domain.locale.ProfileDao
-import dagger.hilt.android.testing.HiltAndroidTest
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.runBlocking
 import org.junit.After
@@ -21,7 +20,7 @@ import java.io.IOException
  *
  * See [testing documentation](http://d.android.com/tools/testing).
  */
-@HiltAndroidTest
+
 @RunWith(RobolectricTestRunner::class)
 class ProfileDaoUnitTest {
 
