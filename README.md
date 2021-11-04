@@ -1,14 +1,13 @@
-# Solutions
+# Solution
 
-- All dependencies are justified in the gradle files by commenting
 - Author : Frederic Lemieux
-- Continuous integration done with Circle
-  ci [![CircleCI](https://circleci.com/gh/TAGASK/techtest/tree/main.svg?style=svg)](https://circleci.com/gh/TAGASK/techtest/tree/main)
-
+- All dependencies are justified in the gradle files by comments
+- Continuous integration done with Circle ci
+  [![CircleCI](https://circleci.com/gh/TAGASK/techtest/tree/main.svg?style=svg)](https://circleci.com/gh/TAGASK/techtest/tree/main)
 - the project respect clean architecture and modular architecture
 - modules :
-    * app with the both screen required
-    * base with all the template class implemented that can be reuse for other (features/modules)
+  * App - With the both screens required
+  * Base - With all the templates class implemented that can be reuse for other (features/modules)
 
 # Android technical test
 
