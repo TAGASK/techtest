@@ -17,7 +17,6 @@ import androidx.lifecycle.lifecycleScope
 import androidx.navigation.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import com.example.base.utils.autoCleared
 import com.example.base.utils.showToast
 import com.example.techtest.R
 import com.example.techtest.data.entities.Profile
@@ -42,7 +41,7 @@ const val constRecyclerState = "ItemListFragment.recycler.layout"
 class ItemListFragment : Fragment(), ProfileAdapter.ProfileItemListener {
 
 
-    private var binding: FragmentItemListBinding by autoCleared()
+    private lateinit var binding: FragmentItemListBinding
     private val viewModel: ProfileViewModel by viewModels()
     private lateinit var adapter: ProfileAdapter
 

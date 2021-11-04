@@ -12,7 +12,6 @@ import androidx.lifecycle.flowWithLifecycle
 import androidx.lifecycle.lifecycleScope
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.resource.bitmap.CircleCrop
-import com.example.base.utils.autoCleared
 import com.example.base.utils.showToast
 import com.example.techtest.data.entities.ProfileDetails
 import com.example.techtest.databinding.FragmentItemDetailBinding
@@ -30,7 +29,7 @@ import kotlinx.coroutines.flow.onEach
 class ItemDetailFragment : Fragment() {
 
 
-    private var binding: FragmentItemDetailBinding by autoCleared()
+    private lateinit var binding: FragmentItemDetailBinding
     private val viewModel: ProfileDetailsViewModel by viewModels()
 
 
