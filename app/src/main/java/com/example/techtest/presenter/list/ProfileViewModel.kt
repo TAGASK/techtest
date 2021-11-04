@@ -2,9 +2,9 @@ package com.example.techtest.presenter.list
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.example.base.utils.Resource
 import com.example.techtest.data.entities.Profile
 import com.example.techtest.domain.usecase.GetProfileByPageUseCase
-import com.example.techtest.utils.Resource
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch

@@ -1,7 +1,7 @@
 package com.example.techtest.domain.remote
 
-import com.example.techtest.utils.AppLog
-import com.example.techtest.utils.Resource
+import com.example.base.utils.AppLog
+import com.example.base.utils.Resource
 import retrofit2.Response
 
 abstract class BaseDataSource {

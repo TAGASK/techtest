@@ -1,8 +1,8 @@
 package com.example.techtest.domain.repository
 
+import com.example.base.utils.performGetOperation
 import com.example.techtest.domain.locale.AppDatabase
 import com.example.techtest.domain.remote.ProfileRemoteDataSource
-import com.example.techtest.utils.performGetOperation
 import javax.inject.Inject
 
 class ProfileRepository @Inject constructor(

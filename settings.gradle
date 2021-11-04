@@ -8,3 +8,4 @@ dependencyResolutionManagement {
 }
 rootProject.name = "techtest"
 include ':app'
+include ':base'

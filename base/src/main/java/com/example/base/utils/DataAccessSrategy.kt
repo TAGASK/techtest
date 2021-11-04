@@ -1,4 +1,4 @@
-package com.example.techtest.utils
+package com.example.base.utils
 
 import kotlinx.coroutines.flow.*
 

@@ -1,9 +1,8 @@
-package com.example.techtest.utils
+package com.example.base.utils
 
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.DefaultLifecycleObserver
 import androidx.lifecycle.LifecycleOwner
-import androidx.lifecycle.observe
 import kotlin.properties.ReadWriteProperty
 import kotlin.reflect.KProperty
 
