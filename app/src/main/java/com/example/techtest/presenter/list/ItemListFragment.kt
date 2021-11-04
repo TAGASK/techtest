@@ -1,4 +1,4 @@
-package com.example.techtest.presenter
+package com.example.techtest.presenter.list
 
 import android.os.Bundle
 import android.os.Parcelable
@@ -11,15 +11,21 @@ import androidx.annotation.Nullable
 import androidx.core.view.ViewCompat
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
-import androidx.lifecycle.Observer
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.flowWithLifecycle
+import androidx.lifecycle.lifecycleScope
 import androidx.navigation.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.techtest.R
+import com.example.techtest.data.entities.Profile
 import com.example.techtest.databinding.FragmentItemListBinding
-import com.example.techtest.utils.Resource
+import com.example.techtest.presenter.details.ItemDetailFragment
 import com.example.techtest.utils.autoCleared
+import com.example.techtest.utils.showToast
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.flow.launchIn
+import kotlinx.coroutines.flow.onEach
 
 const val constRecyclerState = "ItemListFragment.recycler.layout"
 
@@ -83,40 +89,45 @@ class ItemListFragment : Fragment(), ProfileAdapter.ProfileItemListener {
 
         val recyclerView: RecyclerView = binding.itemList
         setupRecyclerView(recyclerView, this)
-        setUpObservers()
+        observeState()
+        observeProfiles()
         viewModel.start()
     }
 
-    private fun setUpObservers() {
-        viewModel.profile.observe(viewLifecycleOwner, Observer {
-            when (it.status) {
-                Resource.Status.SUCCESS -> {
-                    it.data?.let { data ->
-                        binding.progressBar?.visibility = View.GONE
-                        if (data.isEmpty()) {
-                            binding.itemList.clearOnScrollListeners()
-                            Toast.makeText(
-                                requireContext(), R.string.end_of_list, Toast.LENGTH_SHORT
-                            ).show()
-                        } else {
-                            if (adapter.itemCount > 0) {
-                                adapter.add(ArrayList(data))
-                            } else {
-                                adapter.setItems(ArrayList(data))
-                            }
-                        }
-                    }
-                }
-
-                Resource.Status.ERROR -> {
-                    binding.progressBar?.visibility = View.GONE
-                    Toast.makeText(requireContext(), it.message, Toast.LENGTH_SHORT).show()
-                }
-
-                Resource.Status.LOADING ->
-                    binding.progressBar?.visibility = View.VISIBLE
+    private fun observeProfiles() {
+        viewModel.profile.flowWithLifecycle(viewLifecycleOwner.lifecycle, Lifecycle.State.STARTED)
+            .onEach { profiles ->
+                profiles?.let { handleSuccess(it) }
             }
-        })
+            .launchIn(viewLifecycleOwner.lifecycleScope)
+    }
+
+    private fun observeState() {
+        viewModel.mState.flowWithLifecycle(viewLifecycleOwner.lifecycle, Lifecycle.State.STARTED)
+            .onEach { state -> handleState(state) }
+            .launchIn(viewLifecycleOwner.lifecycleScope)
+    }
+
+    private fun handleState(state: ItemListFragmentState) {
+        when (state) {
+            is ItemListFragmentState.Error -> requireActivity().showToast(state.error)
+            ItemListFragmentState.Init -> Unit
+            is ItemListFragmentState.IsLoading -> handleLoading(state.isLoading)
+            is ItemListFragmentState.ShowToast -> requireActivity().showToast(state.message)
+        }
+
+    }
+
+    private fun handleSuccess(profiles: List<Profile>) {
+        adapter.setItems(ArrayList(profiles))
+    }
+
+    private fun handleLoading(loading: Boolean) {
+        if (loading) {
+            binding.progressBar?.visibility = View.VISIBLE
+        } else {
+            binding.progressBar?.visibility = View.GONE
+        }
     }
 
     private fun setupRecyclerView(

@@ -1,4 +1,4 @@
-package com.example.techtest.presenter
+package com.example.techtest.presenter.details
 
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity

@@ -18,7 +18,7 @@
         android:scrollbarAlwaysDrawVerticalTrack="true"
         android:scrollbarFadeDuration="0"
         app:layoutManager="LinearLayoutManager"
-        tools:context="com.example.techtest.presenter.ItemDetailHostActivity"
+        tools:context="com.example.techtest.presenter.details.ItemDetailHostActivity"
         tools:listitem="@layout/item_list_content" />
 
     <ProgressBar

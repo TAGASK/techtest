@@ -24,7 +24,7 @@
         app:layout_constraintEnd_toStartOf="@id/guideline"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        tools:context="com.example.techtest.presenter.ItemDetailHostActivity"
+        tools:context="com.example.techtest.presenter.details.ItemDetailHostActivity"
         tools:listitem="@layout/item_list_content" />
 
     <fragment

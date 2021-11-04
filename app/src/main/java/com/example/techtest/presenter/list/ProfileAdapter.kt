@@ -1,4 +1,4 @@
-package com.example.techtest.presenter
+package com.example.techtest.presenter.list
 
 import android.annotation.SuppressLint
 import android.view.LayoutInflater

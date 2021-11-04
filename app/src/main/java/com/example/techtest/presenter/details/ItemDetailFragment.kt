@@ -1,21 +1,24 @@
-package com.example.techtest.presenter
+package com.example.techtest.presenter.details
 
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
-import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
-import androidx.lifecycle.Observer
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.flowWithLifecycle
+import androidx.lifecycle.lifecycleScope
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.resource.bitmap.CircleCrop
 import com.example.techtest.data.entities.ProfileDetails
 import com.example.techtest.databinding.FragmentItemDetailBinding
-import com.example.techtest.utils.Resource
 import com.example.techtest.utils.autoCleared
+import com.example.techtest.utils.showToast
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.flow.launchIn
+import kotlinx.coroutines.flow.onEach
 
 /**
  * A fragment representing a single Item detail screen.
@@ -42,12 +45,48 @@ class ItemDetailFragment : Fragment() {
         val rootView = binding.root
 
         itemDetailTextView = binding.itemDetail
-        updateContent()
+        observeState()
+        observeProfileDetails()
+
         arguments?.getString(ARG_ITEM_ID)?.let {
             viewModel.start(it)
         }
 
         return rootView
+    }
+
+    private fun observeProfileDetails() {
+        viewModel.profileDetails.flowWithLifecycle(
+            viewLifecycleOwner.lifecycle,
+            Lifecycle.State.STARTED
+        )
+            .onEach { profileDetails ->
+                profileDetails?.let { bindDetails(it) }
+            }
+            .launchIn(viewLifecycleOwner.lifecycleScope)
+    }
+
+    private fun observeState() {
+        viewModel.mState.flowWithLifecycle(viewLifecycleOwner.lifecycle, Lifecycle.State.STARTED)
+            .onEach { state -> handleState(state) }
+            .launchIn(viewLifecycleOwner.lifecycleScope)
+    }
+
+    private fun handleState(state: ItemDetailsFragmentState) {
+        when (state) {
+            is ItemDetailsFragmentState.Error -> requireActivity().showToast(state.error)
+            ItemDetailsFragmentState.Init -> Unit
+            is ItemDetailsFragmentState.IsLoading -> handleIsLoading(state.isLoading)
+            is ItemDetailsFragmentState.ShowToast -> requireActivity().showToast(state.message)
+        }
+    }
+
+    private fun handleIsLoading(loading: Boolean) {
+        if (loading) {
+            binding.progressBar?.visibility = View.VISIBLE
+        } else {
+            binding.progressBar?.visibility = View.GONE
+        }
     }
 
     private fun bindDetails(data: ProfileDetails) {
@@ -62,32 +101,6 @@ class ItemDetailFragment : Fragment() {
             .transform(CircleCrop())
             .into(binding.image)
     }
-
-    private fun updateContent() {
-        viewModel.profileDetails.observe(viewLifecycleOwner, Observer { it ->
-            when (it.status) {
-                Resource.Status.SUCCESS -> {
-                    it.data?.let { data ->
-                        bindDetails(data)
-                        binding.progressBar?.visibility = View.GONE
-                        binding.itemDetailContainer.visibility = View.VISIBLE
-                    }
-                }
-
-                Resource.Status.ERROR -> {
-                    binding.progressBar?.visibility = View.GONE
-                    Toast.makeText(activity, it.message, Toast.LENGTH_SHORT)
-                        .show()
-                }
-
-                Resource.Status.LOADING -> {
-                    binding.progressBar?.visibility = View.VISIBLE
-                    binding.itemDetailContainer.visibility = View.GONE
-                }
-            }
-        })
-    }
-
 
     companion object {
         /**

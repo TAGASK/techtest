@@ -7,7 +7,7 @@
 
     <fragment
         android:id="@+id/item_list_fragment"
-        android:name="com.example.techtest.presenter.ItemListFragment"
+        android:name="com.example.techtest.presenter.list.ItemListFragment"
         android:label="@string/title_item_list">
         <action
             android:id="@+id/show_item_detail"
@@ -15,7 +15,7 @@
     </fragment>
     <fragment
         android:id="@+id/item_detail_fragment"
-        android:name="com.example.techtest.presenter.ItemDetailFragment"
+        android:name="com.example.techtest.presenter.details.ItemDetailFragment"
         android:label="@string/title_item_detail"
         tools:layout="@layout/fragment_item_detail">
         <argument

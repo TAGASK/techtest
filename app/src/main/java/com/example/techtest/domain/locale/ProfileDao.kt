@@ -1,20 +1,20 @@
 package com.example.techtest.domain.locale
 
-import androidx.lifecycle.LiveData
 import androidx.room.Dao
 import androidx.room.Insert
 import androidx.room.OnConflictStrategy
 import androidx.room.Query
 import com.example.techtest.data.entities.Profile
+import kotlinx.coroutines.flow.Flow
 
 @Dao
 interface ProfileDao {
 
     @Query("SELECT * FROM Profiles")
-    fun getUsers(): LiveData<List<Profile>>
+    fun getUsers(): Flow<List<Profile>>
 
     @Query("SELECT * FROM Profiles WHERE id = :id")
-    fun getUser(id: Int): LiveData<Profile>
+    fun getUser(id: Int): Flow<Profile>
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insertAll(profiles: List<Profile>)
