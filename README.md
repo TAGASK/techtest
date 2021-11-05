@@ -9,6 +9,17 @@
   * App - With the both screens required
   * Base - With all the templates class implemented that can be reuse for other (features/modules)
 
+- I added lazy loading
+- I added test on DB (Room), Unit test
+- the strategy is to look in the local DB if data not present i go fetch it by api then i update the
+  database and listen any change on DB
+- I added dto to map to the entity to be able to modify it easily in the future.
+
+What could have been had :
+
+- UI tests
+- End to End tests
+
 # Android technical test
 
 ## Instructions
