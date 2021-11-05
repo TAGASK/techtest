@@ -7,8 +7,8 @@ import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.resource.bitmap.CircleCrop
-import com.example.techtest.data.entities.Profile
 import com.example.techtest.databinding.ItemListContentBinding
+import com.example.techtest.domain.entities.Profile
 
 class ProfileAdapter(private val listener: ProfileItemListener) :
     RecyclerView.Adapter<CharacterViewHolder>() {

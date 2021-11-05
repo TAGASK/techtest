@@ -1,8 +1,8 @@
 package com.example.techtest.domain.usecase
 
 import com.example.base.utils.Resource
-import com.example.techtest.data.entities.ProfileDetails
-import com.example.techtest.domain.repository.ProfileRepository
+import com.example.techtest.data.repository.ProfileRepository
+import com.example.techtest.domain.entities.ProfileDetails
 import kotlinx.coroutines.flow.Flow
 import javax.inject.Inject
 

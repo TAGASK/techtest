@@ -19,8 +19,8 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.base.utils.showToast
 import com.example.techtest.R
-import com.example.techtest.data.entities.Profile
 import com.example.techtest.databinding.FragmentItemListBinding
+import com.example.techtest.domain.entities.Profile
 import com.example.techtest.presenter.details.ItemDetailFragment
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.launchIn

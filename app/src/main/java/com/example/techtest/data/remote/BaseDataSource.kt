@@ -1,4 +1,4 @@
-package com.example.techtest.domain.remote
+package com.example.techtest.data.remote
 
 import com.example.base.utils.AppLog
 import com.example.base.utils.Resource

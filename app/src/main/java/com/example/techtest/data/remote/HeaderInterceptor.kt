@@ -1,4 +1,4 @@
-package com.example.techtest.domain.remote
+package com.example.techtest.data.remote
 
 import com.example.techtest.BuildConfig
 import okhttp3.Interceptor

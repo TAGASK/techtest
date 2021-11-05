@@ -1,11 +1,11 @@
-package com.example.techtest.domain.locale
+package com.example.techtest.data.locale
 
 import android.content.Context
 import androidx.room.Database
 import androidx.room.Room
 import androidx.room.RoomDatabase
-import com.example.techtest.data.entities.Profile
-import com.example.techtest.data.entities.ProfileDetails
+import com.example.techtest.domain.entities.Profile
+import com.example.techtest.domain.entities.ProfileDetails
 
 @Database(entities = [ProfileDetails::class, Profile::class], version = 1, exportSchema = false)
 abstract class AppDatabase : RoomDatabase() {

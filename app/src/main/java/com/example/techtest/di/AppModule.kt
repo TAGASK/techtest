@@ -1,12 +1,12 @@
-package com.example.techtest.domain.di
+package com.example.techtest.di
 
 import android.content.Context
 import com.example.techtest.BuildConfig
-import com.example.techtest.domain.locale.AppDatabase
-import com.example.techtest.domain.remote.HeaderInterceptor
-import com.example.techtest.domain.remote.ProfileRemoteDataSource
-import com.example.techtest.domain.remote.ProfileService
-import com.example.techtest.domain.repository.ProfileRepository
+import com.example.techtest.data.locale.AppDatabase
+import com.example.techtest.data.remote.HeaderInterceptor
+import com.example.techtest.data.remote.ProfileRemoteDataSource
+import com.example.techtest.data.remote.ProfileService
+import com.example.techtest.data.repository.ProfileRepository
 import com.google.gson.Gson
 import com.google.gson.GsonBuilder
 import dagger.Module

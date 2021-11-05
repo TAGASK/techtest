@@ -1,10 +1,10 @@
-package com.example.techtest.domain.locale
+package com.example.techtest.data.locale
 
 import androidx.room.Dao
 import androidx.room.Insert
 import androidx.room.OnConflictStrategy
 import androidx.room.Query
-import com.example.techtest.data.entities.Profile
+import com.example.techtest.domain.entities.Profile
 import kotlinx.coroutines.flow.Flow
 
 @Dao

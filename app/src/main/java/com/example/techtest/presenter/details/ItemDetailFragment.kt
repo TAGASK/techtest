@@ -13,8 +13,8 @@ import androidx.lifecycle.lifecycleScope
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.resource.bitmap.CircleCrop
 import com.example.base.utils.showToast
-import com.example.techtest.data.entities.ProfileDetails
 import com.example.techtest.databinding.FragmentItemDetailBinding
+import com.example.techtest.domain.entities.ProfileDetails
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach

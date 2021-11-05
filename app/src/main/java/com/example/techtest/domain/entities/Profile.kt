@@ -1,4 +1,4 @@
-package com.example.techtest.data.entities
+package com.example.techtest.domain.entities
 
 import androidx.room.Entity
 import androidx.room.PrimaryKey

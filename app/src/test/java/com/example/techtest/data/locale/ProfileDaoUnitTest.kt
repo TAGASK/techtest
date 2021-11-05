@@ -1,10 +1,8 @@
-package com.example.techtest
+package com.example.techtest.data.locale
 
 import androidx.room.Room
 import androidx.test.core.app.ApplicationProvider
-import com.example.techtest.data.entities.Profile
-import com.example.techtest.domain.locale.AppDatabase
-import com.example.techtest.domain.locale.ProfileDao
+import com.example.techtest.domain.entities.Profile
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.runBlocking
 import org.junit.After

@@ -3,7 +3,7 @@ package com.example.techtest.presenter.details
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.base.utils.Resource
-import com.example.techtest.data.entities.ProfileDetails
+import com.example.techtest.domain.entities.ProfileDetails
 import com.example.techtest.domain.usecase.GetProfileDetailsByIdUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.*
