@@ -15,7 +15,7 @@
   database and listen any change on DB
 - I added dto to map to the entity to be able to modify it easily in the future.
 
-What could have been had :
+What could have been added :
 
 - UI tests
 - End to End tests
